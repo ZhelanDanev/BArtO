@@ -1,0 +1,62 @@
+@import "forms.css";
+
+nav {
+    background-color: #f2f2f2;
+    overflow: hidden;
+}
+
+nav a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    background-color: #ddd;
+}
+
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.profile-image {
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 20%;
+    object-fit: cover;
+}
+
+.profile-info {
+}
+
+
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: white;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.social-icons {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+  }
+
+  .social-icon {
+      margin: 0 10px 10px 10px;
+  }
