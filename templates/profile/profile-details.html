@@ -1,0 +1,57 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>{{ artist.user.username}}</h1>
+    
+        <div class="container">
+        <div class="profile-image">
+        {% if artist.profile_picture %}
+                <img src="{{ artist.profile_picture.url }}" alt="Профилна снимка" class="w-50">
+            {% else %}
+                <img src="{% static 'images/default_profil_pic.png' %}" alt="Профилна снимка" class="profile-pic">
+            {% endif %}
+        </div>
+        
+        
+
+            <h2>{{ artist.user.username }}</h2>
+            {% if artist.first_name and artist.last_name %}
+                <p><strong>Име:</strong> {{ artist.first_name }} {{ artist.last_name }}</p>
+            {% endif %}
+        
+            <p><strong>Категория:</strong> {{ artist.get_category_display }}</p>
+             {% if artist.bio %}
+                <p><strong>Биография:</strong> {{ artist.bio }}</p>
+            {% endif %}
+            
+            {% if artist.user.social_media_links %}
+                    <p><strong>Социални мрежи:</strong></p>
+                
+    <ul class="social-icons">
+        {% for platform, link in artist.user.social_media_links.items %}
+            {% if link %}
+                <li class="social-icon">
+                    <a href="{{ link }}" class="btn btn-secondary" target="_blank">
+                        <i class="fab fa-{{ platform }}-f"></i> {{ platform }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+            {% endif %}
+            
+            
+
+        
+            
+        <div id="action-buttons">
+                <a href="{% url 'artist_edit' user.artist.pk %}" class="btn btn-success">Редактирай профил</a>
+                <a href="{% url 'artist_delete' user.artist.pk %}" class="btn btn-danger">Изтрий профил</a>
+        </div>
+            
+        </div>
+{#            <button class="btn btn-success">Качи съдържание</button>#}
+</div>
+
+    {% endblock %}
