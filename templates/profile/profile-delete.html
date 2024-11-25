@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 {% extends 'common/base.html' %}
 
 {% block content %}
@@ -9,16 +9,5 @@
     <input type="submit" value="Да, изтрий">
     <a href="{% url 'home' %}">Отказ</a>
 </form>
-=======
-{% extends 'common/base.html' %}
 
-{% block content %}
-<h2>Сигурни ли сте, че искате да изтриете профила си?</h2>
-<p>Ще бъдат изтрити всички данни, свързани с профила Ви на артист.</p>
-<form method="POST">
-    {% csrf_token %}
-    <input type="submit" value="Да, изтрий">
-    <a href="{% url 'home' %}">Отказ</a>
-</form>
->>>>>>> origin/main
 {% endblock %}
