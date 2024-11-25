@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'common/base.html' %}
 {% load static %}
 
@@ -19,4 +20,27 @@
 
         <button type="submit">Запази промените</button>
     </form>
+=======
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">  <!-- Включваме enctype за файлове -->
+        {% csrf_token %}
+        {{ artist_form.as_p }}
+        
+        <!-- Показваме съществуващата профилна снимка или стандартна -->
+        {% if artist.profile_picture %}
+            <img src="{{ artist.profile_picture.url }}" alt="Профилна снимка" class="w-50">
+        {% else %}
+            <img src="{% static 'images/default_profil_pic.png' %}" alt="Профилна снимка" class="profile-pic">
+        {% endif %}
+        
+        <!-- Поле за качване на нова профилна снимка -->
+{#        <label for="profile_picture">Избери нова профилна снимка:</label>#}
+{#        <input type="file" name="profile_picture" id="profile_picture">#}
+
+        <button type="submit">Запази промените</button>
+    </form>
+>>>>>>> origin/main
 {% endblock %}

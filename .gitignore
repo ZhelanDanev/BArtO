@@ -162,4 +162,8 @@ cython_debug/
 #.idea/
 
 # Ignore secret key and database settings
+<<<<<<< HEAD
 secret_key_and_database.py
+=======
+secret_key_and_database
+>>>>>>> origin/main
