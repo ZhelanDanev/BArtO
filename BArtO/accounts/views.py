@@ -1,12 +1,13 @@
-
+from django.contrib import messages
 from django.contrib.auth import login, logout, get_user_model
 from django.http import JsonResponse, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView
 
 from .forms import ArtistEditForm, ArtistRegistrationForm
 from .models import Artist
+from ..connections.models import Connection
 
 
 def home(request):
@@ -44,35 +45,53 @@ class ArtistDetailView(DetailView):
     template_name = 'profile/profile-details.html'
     context_object_name = 'artist'
 
-    def get_object(self, queryset=None):
-        # Проверява дали потребителят има свързан профил
-        if self.request.user.is_authenticated:
-            try:
-                return Artist.objects.get(user=self.request.user)
-            except Artist.DoesNotExist:
-                return redirect('register')  # Ако няма профил, пренасочва
-        return redirect('login')  # Ако не е влязъл в системата
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        artist = self.get_object()
 
+        # Последователи на артиста
+        followers = Connection.objects.filter(
+            to_user=artist.user,
+            connection_type=Connection.FOLLOW
+        )
+        context['followers'] = followers
+
+        # Профили, които артистът следва
+        following = Connection.objects.filter(
+            from_user=artist.user,
+            connection_type=Connection.FOLLOW
+        )
+        context['following'] = following
+
+        # Проверка дали текущият потребител следва артиста
+        if self.request.user.is_authenticated:
+            context['is_following'] = followers.filter(from_user=self.request.user).exists()
+        else:
+            context['is_following'] = False
+
+            # Проверка дали разглежданият профил принадлежи на текущия потребител
+        context['is_own_profile'] = self.request.user == artist.user
+
+        return context
 
 def artist_edit(request, pk):
-    # Вземаме потребителя
+    # Вземаме свързания Artist
     artist = getattr(request.user, 'artist', None)
+    if not artist or artist.pk != pk:
+        return redirect('artist_details', pk=pk)
 
-    # Ако потребителят няма свързан Artist
-    if not artist:
-        return redirect('register')
-
-    # Обработка на POST заявката
     if request.method == 'POST':
-        artist_form = ArtistEditForm(request.POST, request.FILES, instance=artist)
-        if artist_form.is_valid():
-            artist_form.save()
-            return redirect('artist_details', pk=pk)  # Пренасочваме към профила
+        form = ArtistEditForm(request.POST, request.FILES, instance=artist, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Профилът е успешно обновен!")
+            return redirect('artist_details', pk=pk)
+        else:
+            messages.error(request, "Моля, коригирайте грешките във формуляра.")
     else:
-        # Ако е GET заявка, зареждаме формата със съществуващите данни за artist
-        artist_form = ArtistEditForm(instance=artist)
+        form = ArtistEditForm(instance=artist, user=request.user)
 
-    return render(request, 'profile/profile-edit.html', {'artist_form': artist_form})
+    return render(request, 'profile/profile-edit.html', {'artist_form': form})
 
 
 class ArtistDeleteView(DeleteView):
@@ -95,4 +114,13 @@ class ArtistDeleteView(DeleteView):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+User = get_user_model()
+
+
+def search_users(request):
+    query = request.GET.get('q')
+    users = User.objects.filter(username__icontains=query)
+    return render(request, 'common/search_results.html', {'users': users})
 

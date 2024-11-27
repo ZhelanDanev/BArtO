@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "BArtO.accounts.apps.AccountsConfig"
+    "BArtO.accounts.apps.AccountsConfig",
+    "BArtO.connections.apps.ConnectionsConfig"
 ]
 
 MIDDLEWARE = [

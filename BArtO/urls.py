@@ -22,11 +22,14 @@ from django.conf.urls.static import static
 
 import BArtO
 from BArtO.accounts import views
+from BArtO.accounts.views import search_users
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('search/', search_users, name='search_users'),
     path('accounts/', include('BArtO.accounts.urls')),
+    path('connect/', include('BArtO.connections.urls'))
 ]
 
 

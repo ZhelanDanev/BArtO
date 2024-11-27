@@ -1,24 +1,47 @@
-
 {% extends 'common/base.html' %}
 {% load static %}
 
 {% block content %}
-    <form method="post" enctype="multipart/form-data">  <!-- Включваме enctype за файлове -->
-        {% csrf_token %}
-        {{ artist_form.as_p }}
-        
-        <!-- Показваме съществуващата профилна снимка или стандартна -->
-        {% if artist.profile_picture %}
-            <img src="{{ artist.profile_picture.url }}" alt="Профилна снимка" class="w-50">
-        {% else %}
-            <img src="{% static 'images/default_profil_pic.png' %}" alt="Профилна снимка" class="profile-pic">
-        {% endif %}
-        
-        <!-- Поле за качване на нова профилна снимка -->
-{#        <label for="profile_picture">Избери нова профилна снимка:</label>#}
-{#        <input type="file" name="profile_picture" id="profile_picture">#}
-
-        <button type="submit">Запази промените</button>
-    </form>
-
+    <div class="container mt-4">
+        <h2>Редактиране на профил</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_first_name">First Name:</label>
+                {{ artist_form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Last Name:</label>
+                {{ artist_form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_profile_picture">Profile Picture:</label>
+                {% if artist_form.instance.profile_picture %}
+                    <img src="{{ artist_form.instance.profile_picture.url }}" alt="Profile Picture" style="max-width: 200px; max-height: 200px;">
+                {% endif %}
+                {{ artist_form.profile_picture }}
+            </div>
+            <div class="form-group">
+                <label for="id_bio">Bio:</label>
+                {{ artist_form.bio }}
+            </div>
+            <div class="form-group">
+                <label for="id_category">Category:</label>
+                {{ artist_form.category }}
+            </div>
+            <div class="form-group">
+                <label for="id_facebook">Facebook:</label>
+                {{ artist_form.facebook }}
+            </div>
+            <div class="form-group">
+                <label for="id_youtube">YouTube:</label>
+                {{ artist_form.youtube }}
+            </div>
+            <div class="form-group">
+                <label for="id_instagram">Instagram:</label>
+                {{ artist_form.instagram }}
+            </div>
+            <button type="submit" class="btn btn-primary">Запази промените</button>
+        </form>
+    </div>
 {% endblock %}

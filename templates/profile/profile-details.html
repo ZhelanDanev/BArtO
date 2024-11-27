@@ -1,58 +1,151 @@
-
 {% extends 'common/base.html' %}
 {% load static %}
 
 {% block content %}
-    <h1>{{ artist.user.username}}</h1>
-    
-        <div class="container">
+    <h1>{{ artist.user.username }}</h1>
+
+    <div class="container">
         <div class="profile-image">
-        {% if artist.profile_picture %}
+            {% if artist.profile_picture %}
                 <img src="{{ artist.profile_picture.url }}" alt="Профилна снимка" class="w-50">
             {% else %}
                 <img src="{% static 'images/default_profil_pic.png' %}" alt="Профилна снимка" class="profile-pic">
             {% endif %}
         </div>
-        
-        
 
-            <h2>{{ artist.user.username }}</h2>
-            {% if artist.first_name and artist.last_name %}
-                <p><strong>Име:</strong> {{ artist.first_name }} {{ artist.last_name }}</p>
-            {% endif %}
-        
-            <p><strong>Категория:</strong> {{ artist.get_category_display }}</p>
-             {% if artist.bio %}
-                <p><strong>Биография:</strong> {{ artist.bio }}</p>
-            {% endif %}
-            
-            {% if artist.user.social_media_links %}
-                    <p><strong>Социални мрежи:</strong></p>
-                
-    <ul class="social-icons">
-        {% for platform, link in artist.user.social_media_links.items %}
-            {% if link %}
-                <li class="social-icon">
-                    <a href="{{ link }}" class="btn btn-secondary" target="_blank">
-                        <i class="fab fa-{{ platform }}-f"></i> {{ platform }}
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-            {% endif %}
-            
-            
+        <h2>{{ artist.user.username }}</h2>
+        {% if artist.first_name and artist.last_name %}
+            <p><strong>Име:</strong> {{ artist.first_name }} {{ artist.last_name }}</p>
+        {% endif %}
 
-        
-            
-        <div id="action-buttons">
-                <a href="{% url 'artist_edit' user.artist.pk %}" class="btn btn-success">Редактирай профил</a>
-                <a href="{% url 'artist_delete' user.artist.pk %}" class="btn btn-danger">Изтрий профил</a>
-        </div>
-            
-        </div>
-{#            <button class="btn btn-success">Качи съдържание</button>#}
-</div>
+        <p><strong>Категория:</strong> {{ artist.get_category_display }}</p>
+        {% if artist.bio %}
+            <p><strong>Биография:</strong> {{ artist.bio }}</p>
+        {% endif %}
+
+        {% if artist.user.social_media_links %}
+            <p><strong>Социални мрежи:</strong></p>
+
+            <ul class="social-icons">
+                {% for platform, link in artist.user.social_media_links.items %}
+                    {% if link %}
+                        <li class="social-icon">
+                            <a href="{{ link }}" class="btn btn-secondary" target="_blank">
+                                <i class="fab fa-{{ platform }}-f"></i> {{ platform }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
     
-    {% endblock %}
+    
+    
+                {% if not is_own_profile %}
+                {% if is_following %}
+                <form action="{% url 'unfollow_user' artist.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Unfollow</button>
+                </form>
+            {% else %}
+                <form action="{% url 'follow_user' artist.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Follow</button>
+                </form>
+            {% endif %}
+            {% endif %}
+    
+    
+    
+        {% if artist.user != request.user %}  <form method="get" action="{% url 'collaborate_with_user' artist.user.id %}">
+                <button type="submit">Collaborate</button>
+            </form>
+        {% endif %}
+
+        <div id="action-buttons">
+            {% if artist.user == request.user %}
+                <a href="{% url 'artist_edit' artist.pk %}" class="btn btn-success">Редактирай профил</a>
+                <a href="{% url 'artist_delete' artist.pk %}" class="btn btn-danger">Изтрий профил</a>
+            {% endif %}
+        </div>
+    </div>
+
+    
+{% if is_following %}
+    <p class="text-lg font-semibold">
+        <a href="{% url 'chat_view' artist.user.pk %}" class="text-blue-500 hover:text-blue-700">Start Chat</a>
+    </p>
+{% endif %}
+
+<div class="mt-4 space-y-2">
+    <p class="text-sm text-gray-600">
+        Followers: 
+        <a href="#" data-bs-toggle="modal" data-bs-target="#followersModal" class="text-blue-500 hover:text-blue-700">
+            {{ followers.count }}
+        </a>
+    </p>
+    <p class="text-sm text-gray-600">
+        Following: 
+        <a href="#" data-bs-toggle="modal" data-bs-target="#followingModal" class="text-blue-500 hover:text-blue-700">
+            {{ following.count }}
+        </a>
+    </p>
+</div>
+
+<!-- Модал за списък с последователи -->
+<div class="modal fade" id="followersModal" tabindex="-1" aria-labelledby="followersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-gray-800 text-white">
+                <h5 class="modal-title" id="followersModalLabel">Последователи</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if followers %}
+                    <ul class="space-y-2">
+                        {% for connection in followers %}
+                            <li class="flex items-center space-x-2">
+                                <a href="{% url 'artist_details' connection.from_user.artist.pk %}" class="text-blue-500 hover:text-blue-700">
+                                    {{ connection.from_user.username }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500">No followers yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модал за списък с последвани -->
+<div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="followingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-gray-800 text-white">
+                <h5 class="modal-title" id="followingModalLabel">Последвани</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if following %}
+                    <ul class="space-y-2">
+                        {% for connection in following %}
+                            <li class="flex items-center space-x-2">
+                                <a href="{% url 'artist_details' connection.to_user.artist.pk %}" class="text-blue-500 hover:text-blue-700">
+                                    {{ connection.to_user.username }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500">No followed profiles yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    {#            <button class="btn btn-success">Качи съдържание</button>#}
+{% endblock %}

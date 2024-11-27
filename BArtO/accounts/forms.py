@@ -66,11 +66,65 @@ class ArtistRegistrationForm(UserCreationForm):
         return user
 
 
+# class ArtistEditForm(forms.ModelForm):
+#     social_media_links = forms.CharField(
+#         widget=forms.Textarea(attrs={'rows': 3}),
+#         required=False, label="Social Media Links (JSON format)")
+#
+#     class Meta:
+#         model = Artist
+#         exclude = ['user']
+
+
 class ArtistEditForm(forms.ModelForm):
-    social_media_links = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3}),
-        required=False, label="Social Media Links (JSON format)")
+    facebook = forms.URLField(
+        required=False,
+        label="Facebook",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Facebook линк',
+            'class': 'form-control',
+        })
+    )
+    youtube = forms.URLField(
+        required=False,
+        label="YouTube",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'YouTube линк',
+            'class': 'form-control',
+        })
+    )
+    instagram = forms.URLField(
+        required=False,
+        label="Instagram",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Instagram линк',
+            'class': 'form-control',
+        })
+    )
 
     class Meta:
         model = Artist
         exclude = ['user']
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)  # Приемаме `user` като аргумент
+        super().__init__(*args, **kwargs)
+        if self.user and hasattr(self.user, 'social_media_links'):
+            social_links = self.user.social_media_links or {}
+            self.fields['facebook'].initial = social_links.get('facebook', '')
+            self.fields['youtube'].initial = social_links.get('youtube', '')
+            self.fields['instagram'].initial = social_links.get('instagram', '')
+
+    def save(self, commit=True):
+        artist = super().save(commit=False)
+        if self.user:
+            self.user.social_media_links = {
+                'facebook': self.cleaned_data.get('facebook'),
+                'youtube': self.cleaned_data.get('youtube'),
+                'instagram': self.cleaned_data.get('instagram'),
+            }
+            if commit:
+                self.user.save()
+        if commit:
+            artist.save()
+        return artist
