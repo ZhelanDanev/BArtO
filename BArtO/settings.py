@@ -20,10 +20,9 @@ from django.urls import reverse_lazy
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-try:
-    from secret_key_and_database import SECRET_KEY, DATABASES
-except ImportError:
-    raise Exception("Missing secret_key.py file with PostgreSQL settings!")
+SECRET_KEY = 'django-insecure-38^e%u(*l=^)%d486m-p@wva3h-8a4w)vz8jq0t0xz4aceli%l'
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -84,6 +83,17 @@ WSGI_APPLICATION = 'BArtO.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "exam_barto",
+        "USER": "postgres",
+        "PASSWORD": "admin",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
+    }
+
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
