@@ -1,1 +1,1 @@
-# BArtO
+Barto - Bulgarian Art Organization is a project by and for Bulgarian artists. Its goal is to help them connect and cooperate. There is an option for chat, following, participation in competitions. There are 3 roles - Admin, editors and artists. There is a separate news section, in which editors publish news about Bulgarian art and culture. There is also a section for art events, in which artists can promote themselves.
