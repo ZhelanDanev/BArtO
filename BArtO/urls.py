@@ -29,7 +29,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('search/', search_users, name='search_users'),
     path('accounts/', include('BArtO.accounts.urls')),
-    path('connect/', include('BArtO.connections.urls'))
+    path('connect/', include('BArtO.connections.urls')),
+    path('events/', include('BArtO.events.urls')),
+    path('notifications/', include('BArtO.notifications.urls'))
 ]
 
 

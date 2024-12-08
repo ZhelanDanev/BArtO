@@ -1,0 +1,33 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Календар</h2>
+        <a href="{% url 'create_event' %}" class="btn btn-success">Създай събитие</a>
+    </div>
+    <div id="calendar" class="mt-4"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/events/json/',  // URL към JSON данни
+            locale: 'bg',  // Български език
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventClick: function (info) {
+                if (info.event.url) {
+                    window.location.href = info.event.url;  // Пренасочване към детайлите на събитието
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

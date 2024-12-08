@@ -1,17 +1,58 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView
 
+
 from .forms import ArtistEditForm, ArtistRegistrationForm
 from .models import Artist
 from ..connections.models import Connection
+from ..notifications.models import Notification
 
 
 def home(request):
     return render(request, 'common/home.html')
+
+
+@login_required
+def notification_list(request):
+    # Вземаме всички уведомления за потребителя
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'notifications/notification_list.html', {'notifications': notifications})
+
+
+# @login_required
+# def profile_details(request, artist_id):
+#     artist = Artist.objects.get(id=artist_id)
+#     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+#
+#     # Вземаме броя на непрочетените нотификации
+#     unread_notifications_count = Notification.objects.filter(user=request.user, is_read=False).count()
+#
+#     return render(request, 'profile-details.html', {
+#         'artist': artist,
+#         'unread_notifications_count': unread_notifications_count,
+#         'notifications': notifications
+#     })
+
+
+@login_required
+def profile_details(request, artist_id):
+    artist = get_object_or_404(Artist, pk=artist_id)
+
+    # Вземете новите (непрочетени) нотификации
+    new_notifications = Notification.objects.filter(user=request.user, is_read=False)
+
+    context = {
+        'artist': artist,
+        'new_notifications_count': new_notifications.count(),
+    }
+
+    return render(request, 'profile/profile-details.html', context)
+
 
 
 class ArtistRegisterView(CreateView):
@@ -69,8 +110,18 @@ class ArtistDetailView(DetailView):
         else:
             context['is_following'] = False
 
-            # Проверка дали разглежданият профил принадлежи на текущия потребител
+        # Проверка дали разглежданият профил принадлежи на текущия потребител
         context['is_own_profile'] = self.request.user == artist.user
+
+        # Вземаме всички нотификации за текущия потребител
+        if self.request.user.is_authenticated:
+            notifications = Notification.objects.filter(user=self.request.user).order_by('-created_at')
+            # Вземаме броя на непрочетените нотификации
+            unread_notifications_count = Notification.objects.filter(user=self.request.user, is_read=False).count()
+            context['unread_notifications_count'] = unread_notifications_count
+            context['notifications'] = notifications
+
+
 
         return context
 
@@ -123,4 +174,3 @@ def search_users(request):
     query = request.GET.get('q')
     users = User.objects.filter(username__icontains=query)
     return render(request, 'common/search_results.html', {'users': users})
-

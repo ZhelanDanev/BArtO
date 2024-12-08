@@ -1,0 +1,38 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Notifications</h1>
+    <ul class="list-group">
+        {% for notification in notifications %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                {{ notification.message }}
+                {% if notification.get_absolute_url != '#' %}
+                <a href="{{ notification.get_absolute_url }}" class="btn btn-link">View</a>
+                {% endif %}
+            </div>
+            <button class="btn btn-success btn-sm mark-as-read" data-id="{{ notification.id }}">✔</button>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No new notifications.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    document.querySelectorAll('.mark-as-read').forEach(button => {
+        button.addEventListener('click', function() {
+            const notificationId = this.dataset.id;
+            fetch(`/notifications/mark-as-read/${notificationId}/`, { method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}' } })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('li').remove();
+                    }
+                });
+        });
+    });
+</script>
+{% endblock %}

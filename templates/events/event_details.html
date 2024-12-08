@@ -1,0 +1,95 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ event.title }}</h1>
+    {% if event.poster %}
+    <div class="event-poster">
+        <img src="{{ event.poster.url }}" alt="Event Poster" class="img-fluid" />
+    </div>
+{% endif %}
+    <p><strong>Описание:</strong> {{ event.description }}</p>
+    <p><strong>Място:</strong> {{ event.location }}</p>
+    <p><strong>Начало:</strong> {{ event.start_time }}</p>
+    <p><strong>Край:</strong> {{ event.end_time }}</p>
+    <p><strong>Организатор:</strong> {{ event.organizer.username }}</p>
+
+    {% if is_organizer %}
+        <a href="{% url 'edit_event' event.pk %}" class="btn btn-primary">Редактиране</a>
+        <a href="{% url 'delete_event' event.pk %}" class="btn btn-danger">Изтриване</a>
+        <a href="{% url 'invite_followers' event.pk %}" class="btn btn-warning">Покани</a>
+    {% endif %}
+
+    <hr>
+
+  <h3>Гости: 
+        <span id="guest-count" class="badge bg-success">{{ confirmed_count }}</span>
+    </h3>
+
+    <div id="guest-list" class="d-none">
+        <ul>
+            {% for participant in confirmed_guests %}
+                <li>
+                    <a href="{% url 'artist_details' participant.artist.artist.pk %}">
+                        {{ participant.artist.username }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+{% if user_invited %}
+    <h3>You have been invited to this event.</h3>
+    {% if participant and not participant.confirmed %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" name="accept_invitation" class="btn btn-success">Accept</button>
+            <button type="submit" name="decline_invitation" class="btn btn-danger">Decline</button>
+        </form>
+    {% elif participant and participant.confirmed %}
+        <p>You have already accepted this invitation.</p>
+    {% endif %}
+{% else %}
+    <p>You have not been invited to this event.</p>
+{% endif %}
+
+
+    <hr>
+
+
+    <div class="container mt-4">
+        <h2>Дискусия</h2>
+        <div class="comments-section">
+            {% for comment in comments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ comment.author.username }}</h5>
+                        <p class="card-text">{{ comment.content }}
+                        <class="card-text"><small class="text-muted">{{ comment.created_at }}</small></p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% if user_invited or is_organizer %}
+    <h3>Включи се и ти</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit" name="submit_comment">Post Comment</button>
+    </form>
+{% endif %}
+
+</div>
+
+<script>
+    document.getElementById('guest-count').addEventListener('click', function () {
+        var guestList = document.getElementById('guest-list');
+        guestList.classList.toggle('d-none');
+    });
+</script>
+{% endblock %}

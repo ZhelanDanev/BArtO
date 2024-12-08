@@ -40,6 +40,14 @@ nav a:hover {
 .profile-info {
 }
 
+.event-poster img {
+    width: 100%; /* Автоматично адаптиране към контейнера */
+    height: 500px; /* Фиксирана височина */
+    object-fit: contain; /* Изрязване на изображението при нужда */
+    border-radius: 10px; /* Заоблени краища (по желание) */
+}
+
+
 
 select {
     width: 100%;

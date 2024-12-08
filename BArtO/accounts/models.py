@@ -47,6 +47,7 @@ class Artist(models.Model):
         ('actor', 'Актьор'),
     ])
 
+
     def delete(self, using=None, keep_parents=False):
         """
         Презаписва метода за изтриване, за да изтрие и свързания User.

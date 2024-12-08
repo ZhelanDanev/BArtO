@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from .models import Connection, Message
 from .forms import CollaborationForm
 from BArtO.accounts.models import AppUser, Artist
+from ..notifications.models import Notification
 
 
 @login_required
@@ -13,12 +14,43 @@ def follow_user(request, user_id):
     """Follow an artist."""
     artist = get_object_or_404(Artist, pk=user_id)
     if artist.user != request.user:
-        Connection.objects.get_or_create(
+        # Създаваме връзка за следване
+        connection, created = Connection.objects.get_or_create(
             from_user=request.user,
             to_user=artist.user,
             connection_type=Connection.FOLLOW,
         )
+
+        # Създаваме уведомление за ново последване
+        if created:
+            Notification.objects.create(
+                user=artist.user,
+                message=f"{request.user.username} is now following you!",
+                notification_type="new_follower"
+            )
     return redirect('artist_details', pk=user_id)
+
+
+# @login_required
+# def follow_user(request, user_id):
+#     """Follow an artist."""
+#     artist = get_object_or_404(Artist, pk=user_id)
+#     if artist.user != request.user:
+#         # Създаваме връзка за следване
+#         connection, created = Connection.objects.get_or_create(
+#             from_user=request.user,
+#             to_user=artist.user,
+#             connection_type=Connection.FOLLOW,
+#         )
+#
+#         # Създаваме уведомление за ново последване
+#         if created:
+#             Notification.objects.create(
+#                 user=artist.user,
+#                 message=f"{request.user.username} is now following you!",
+#                 notification_type="new_follower"
+#             )
+#     return redirect('artist_details', pk=user_id)
 
 
 @login_required

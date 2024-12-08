@@ -3,7 +3,7 @@
 
 {% block content %}
     <h1>{{ artist.user.username }}</h1>
-
+    
     <div class="container">
         <div class="profile-image">
             {% if artist.profile_picture %}
@@ -148,4 +148,15 @@
 
 
     {#            <button class="btn btn-success">Качи съдържание</button>#}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const popup = document.getElementById('new-notifications-popup');
+    if (popup) {
+        setTimeout(function() {
+            popup.style.display = 'none';  // Скрива прозореца след 5 секунди
+        }, 5000);
+    }
+</script>
 {% endblock %}

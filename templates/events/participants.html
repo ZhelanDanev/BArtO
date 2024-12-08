@@ -1,0 +1,21 @@
+<h1>Participants for {{ event.title }}</h1>
+<ul>
+    {% for participant in participants %}
+        <li><a href="{% url 'profile' participant.artist.id %}">{{ participant.artist.username }}</a></li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'send_invitation' event.id artist.id %}">Send Invitation</a>
+
+
+{% if not participant.confirmed %}
+    <a href="{% url 'rsvp' participant.id True %}">RSVP Yes</a>
+    <a href="{% url 'rsvp' participant.id False %}">RSVP No</a>
+{% else %}
+    <p>You have RSVP'd: Yes</p>
+{% endif %}
+
+
+<a href="{% url 'vote_comment' comment.id 1 %}">Upvote</a>
+<a href="{% url 'vote_comment' comment.id -1 %}">Downvote</a>
+<p>Votes: {{ comment.votes.count }}</p>
