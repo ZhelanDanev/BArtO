@@ -76,10 +76,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'BArtO.notifications.context_processors.unread_notifications_count'
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'BArtO.wsgi.application'
 
