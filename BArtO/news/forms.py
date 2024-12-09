@@ -21,5 +21,5 @@ class NewsCommentForm(forms.ModelForm):
         model = NewsComment
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment...'}),
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Добави коментар...'}),
         }

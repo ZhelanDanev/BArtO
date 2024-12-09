@@ -29,12 +29,6 @@ def create_news(request):
     return render(request, 'news/create_news.html', {'form': form})
 
 
-from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import News
-from .forms import NewsForm
-
-
 @login_required
 @permission_required('news.change_news', raise_exception=True)  # Проверка за разрешение
 def edit_news(request, pk):
@@ -84,17 +78,24 @@ class NewsListView(ListView):
     paginate_by = 5
 
 
-class NewsDetailView(DetailView):
-    model = News
-    template_name = "news/news_detail.html"
+def news_detail(request, pk):
+    news_item = get_object_or_404(News, pk=pk)
+    comments = news_item.comments.all()
 
+    # Обработване на формата за коментари
+    if request.method == 'POST':
+        form = NewsCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user  # Свързваме коментара с текущия потребител
+            comment.news = news_item  # Свързваме коментара с новината
+            comment.save()  # Записваме коментара
+            return redirect('news:news_detail', pk=news_item.pk)  # Пренасочваме към същата страница, за да видим новия коментар
+    else:
+        form = NewsCommentForm()
 
-class AddCommentView(LoginRequiredMixin, CreateView):
-    model = NewsComment
-    form_class = NewsCommentForm
-    template_name = "news/add_comment.html"
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.news = get_object_or_404(News, id=self.kwargs["pk"])
-        return super().form_valid(form)
+    return render(request, 'news/news_detail.html', {
+        'object': news_item,
+        'comments': comments,
+        'comment_form': form
+    })
