@@ -1,0 +1,39 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+<h1>Новини</h1>
+
+{% if user.is_authenticated and user.role == 'editor' %}
+    <a href="{% url 'news:create_news' %}" class="btn btn-primary">Публикувай новина</a>
+{% endif %}
+
+<div>
+    {% for news in news_list %}
+        <h2><a href="{{ news.get_absolute_url }}">{{ news.title }}</a></h2>
+        <p>{{ news.content|truncatechars:100 }}</p>
+        <small>Публикувано на: {{ news.published_date }}</small>
+    {% endfor %}
+</div>
+
+<div>
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

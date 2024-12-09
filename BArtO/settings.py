@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "BArtO.connections.apps.ConnectionsConfig",
     "BArtO.events.apps.EventsConfig",
     "BArtO.notifications.apps.NotificationsConfig",
-    "BArtO.common.apps.CommonConfig"
+    "BArtO.common.apps.CommonConfig",
+    "BArtO.news.apps.NewsConfig"
 ]
 
 MIDDLEWARE = [

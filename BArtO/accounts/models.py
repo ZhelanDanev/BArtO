@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse_lazy
 
 from BArtO.accounts.managers import AppUserManager
 
@@ -46,7 +47,6 @@ class Artist(models.Model):
         ('writer', 'Писател'),
         ('actor', 'Актьор'),
     ])
-
 
     def delete(self, using=None, keep_parents=False):
         """

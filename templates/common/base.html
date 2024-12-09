@@ -27,10 +27,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{% url 'news:news_list' %}">
                             <i>Новини</i>
                         </a>
                     </li>
+                
+                <nav>
+{#    <ul>#}
+{#        <li><a href="{% url 'news:news_list' %}">Новини</a></li>#}
+{#    </ul>#}
+</nav>
+
+                
+                
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'calendar_view' %}">
                             <i>Събития</i>

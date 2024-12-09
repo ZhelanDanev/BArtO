@@ -1,0 +1,22 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+<h1>{{ object.title }}</h1>
+<p>{{ object.content }}</p>
+<small>Публикувано на: {{ object.published_date }}</small>
+
+{% if user == object.author %}
+    <a href="{% url 'news:edit_news' object.id %}" class="btn btn-warning">Редактирай</a>
+    <a href="{% url 'news:delete_news' object.id %}" class="btn btn-danger">Изтрий</a>
+{% endif %}
+
+<h2>Коментари</h2>
+{% for comment in object.comments.all %}
+    <p>{{ comment.content }}</p>
+    <small>— {{ comment.author.username }}</small>
+{% empty %}
+    <p>Няма коментари.</p>
+{% endfor %}
+
+<a href="{% url 'news:add_comment' object.id %}">Добави коментар</a>
+{% endblock %}

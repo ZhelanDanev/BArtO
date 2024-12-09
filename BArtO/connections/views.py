@@ -23,34 +23,15 @@ def follow_user(request, user_id):
 
         # Създаваме уведомление за ново последване
         if created:
+            notification_message = f"{request.user.username} is now following you!"
             Notification.objects.create(
                 user=artist.user,
-                message=f"{request.user.username} is now following you!",
-                notification_type="new_follower"
+                message=notification_message,
+                notification_type=Notification.FOLLOW,
+                sender=request.user  # Добавяме ID на артиста в уведомлението
             )
     return redirect('artist_details', pk=user_id)
 
-
-# @login_required
-# def follow_user(request, user_id):
-#     """Follow an artist."""
-#     artist = get_object_or_404(Artist, pk=user_id)
-#     if artist.user != request.user:
-#         # Създаваме връзка за следване
-#         connection, created = Connection.objects.get_or_create(
-#             from_user=request.user,
-#             to_user=artist.user,
-#             connection_type=Connection.FOLLOW,
-#         )
-#
-#         # Създаваме уведомление за ново последване
-#         if created:
-#             Notification.objects.create(
-#                 user=artist.user,
-#                 message=f"{request.user.username} is now following you!",
-#                 notification_type="new_follower"
-#             )
-#     return redirect('artist_details', pk=user_id)
 
 
 @login_required

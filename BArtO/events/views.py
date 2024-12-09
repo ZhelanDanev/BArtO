@@ -134,16 +134,18 @@ def invite_followers(request, event_id):
     if request.method == 'POST':
         user_ids = request.POST.getlist('user_ids')  # Получаваме ID-та на избраните последователи
         for user_id in user_ids:
-            follower_user = get_object_or_404(UserModel, pk=user_id)  # Търсим UserModel, не е нужно да е AppUser директно
+            follower_user = get_object_or_404(UserModel, pk=user_id)
 
             # Поканване на потребителя за събитието
             EventParticipant.objects.get_or_create(event=event, artist=follower_user)
 
-            # Създаване на уведомление за поканата
+            # Създаване на уведомление за поканата с ID на събитието
+            notification_message = f"You have been invited to the event: {event.title}"
             Notification.objects.create(
                 user=follower_user,
-                message=f"You have been invited to the event: {event.title}",
-                notification_type="event_invite"
+                message=notification_message,
+                notification_type="event_invite",
+                event_id=event.pk  # Добавяме ID на събитието в уведомлението
             )
 
         return JsonResponse({'message': 'Invitations sent successfully.'})

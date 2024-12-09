@@ -1,0 +1,7 @@
+<h1>Изтриване на новина</h1>
+<p>Сигурни ли сте, че искате да изтриете тази новина?</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Да, изтрий новината</button>
+</form>
+<a href="{% url 'news:news_list' %}">Отказ</a>

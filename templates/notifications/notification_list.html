@@ -1,6 +1,4 @@
 {% extends 'common/base.html' %}
-{% load static %}
-
 {% block content %}
 <div class="container mt-4">
     <h1>Notifications</h1>
@@ -8,9 +6,17 @@
         {% for notification in notifications %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <div>
-                {{ notification.message }}
-                {% if notification.get_absolute_url != '#' %}
-                <a href="{{ notification.get_absolute_url }}" class="btn btn-link">View</a>
+                <!-- Проверка за следене на артист или покана за събитие -->
+                {% if notification.artist_id %}
+                    <span>
+                        <a href="{% url 'artist_details' pk=notification.artist_id %}">{{ notification.message }}</a>
+                    </span>
+                {% elif notification.event_id %}
+                    <span>
+                        <a href="{% url 'event_details' pk=notification.event_id %}">{{ notification.message }}</a>
+                    </span>
+                {% else %}
+                    <span>{{ notification.message }}</span>
                 {% endif %}
             </div>
             <button class="btn btn-success btn-sm mark-as-read" data-id="{{ notification.id }}">✔</button>
@@ -25,13 +31,18 @@
     document.querySelectorAll('.mark-as-read').forEach(button => {
         button.addEventListener('click', function() {
             const notificationId = this.dataset.id;
-            fetch(`/notifications/mark-as-read/${notificationId}/`, { method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}' } })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.closest('li').remove();
-                    }
-                });
+            fetch(`/notifications/mark-as-read/${notificationId}/`, { 
+                method: 'POST', 
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.closest('li').remove();
+                }
+            });
         });
     });
 </script>

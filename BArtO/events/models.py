@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse_lazy
 
 from BArtO.accounts.models import AppUser
 
@@ -20,6 +21,9 @@ class Event(models.Model):
     location = models.CharField(max_length=255)
     organizer = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='organized_events')
     discussion_enabled = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse_lazy('event_details', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.title

@@ -31,7 +31,8 @@ urlpatterns = [
     path('accounts/', include('BArtO.accounts.urls')),
     path('connect/', include('BArtO.connections.urls')),
     path('events/', include('BArtO.events.urls')),
-    path('notifications/', include('BArtO.notifications.urls'))
+    path('notifications/', include('BArtO.notifications.urls')),
+    path('news/', include('BArtO.news.urls')),
 ]
 
 
