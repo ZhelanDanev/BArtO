@@ -12,7 +12,6 @@
                 <img src="{% static 'images/default_profil_pic.png' %}" alt="Профилна снимка" class="profile-pic">
             {% endif %}
         </div>
-
         <h2>{{ artist.user.username }}</h2>
         {% if artist.first_name and artist.last_name %}
             <p><strong>Име:</strong> {{ artist.first_name }} {{ artist.last_name }}</p>

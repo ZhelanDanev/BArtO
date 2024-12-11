@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Новини</h1>
 
-{% if user.is_authenticated and user.role == 'editor' %}
+{% if user.is_authenticated and user.role != 'artist' %}
     <a href="{% url 'news:create_news' %}" class="btn btn-primary">Публикувай новина</a>
 {% endif %}
 
@@ -20,8 +20,8 @@
         <div class="pagination">
             <span class="step-links">
                 {% if page_obj.has_previous %}
-                    <a href="?page=1">&laquo; First</a>
-                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    <a href="?page=1">&laquo; Първа страница</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Предишна</a>
                 {% endif %}
 
                 <span class="current">
@@ -29,8 +29,8 @@
                 </span>
 
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                    <a href="?page={{ page_obj.next_page_number }}">Следваща</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Последна &raquo;</a>
                 {% endif %}
             </span>
         </div>

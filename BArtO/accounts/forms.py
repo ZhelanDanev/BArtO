@@ -36,11 +36,11 @@ class ArtistRegistrationForm(UserCreationForm):
         })
     )
 
-    instagram = forms.URLField(
+    spotify = forms.URLField(
         required=False,
-        label="Instagram",
+        label="Spotify",
         widget=forms.TextInput(attrs={
-            'placeholder': 'Въведете линк за Instagram профил',
+            'placeholder': 'Въведете линк за Spotify профил',
             'class': 'form-control',
         })
     )
@@ -48,7 +48,7 @@ class ArtistRegistrationForm(UserCreationForm):
     class Meta:
         model = UserModel
         fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'category', 'facebook',
-                  'youtube', 'instagram']
+                  'youtube', 'spotify']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -57,23 +57,13 @@ class ArtistRegistrationForm(UserCreationForm):
         user.social_media_links = {
             'facebook': self.cleaned_data.get('facebook'),
             'youtube': self.cleaned_data.get('youtube'),
-            'instagram': self.cleaned_data.get('instagram'),
+            'spotify': self.cleaned_data.get('spotify'),
         }
 
         if commit:
             user.save()
 
         return user
-
-
-# class ArtistEditForm(forms.ModelForm):
-#     social_media_links = forms.CharField(
-#         widget=forms.Textarea(attrs={'rows': 3}),
-#         required=False, label="Social Media Links (JSON format)")
-#
-#     class Meta:
-#         model = Artist
-#         exclude = ['user']
 
 
 class ArtistEditForm(forms.ModelForm):
@@ -93,11 +83,11 @@ class ArtistEditForm(forms.ModelForm):
             'class': 'form-control',
         })
     )
-    instagram = forms.URLField(
+    spotify = forms.URLField(
         required=False,
-        label="Instagram",
+        label="Spotify",
         widget=forms.TextInput(attrs={
-            'placeholder': 'Instagram линк',
+            'placeholder': 'Spotify линк',
             'class': 'form-control',
         })
     )
@@ -113,7 +103,7 @@ class ArtistEditForm(forms.ModelForm):
             social_links = self.user.social_media_links or {}
             self.fields['facebook'].initial = social_links.get('facebook', '')
             self.fields['youtube'].initial = social_links.get('youtube', '')
-            self.fields['instagram'].initial = social_links.get('instagram', '')
+            self.fields['spotify'].initial = social_links.get('spotify', '')
 
     def save(self, commit=True):
         artist = super().save(commit=False)
@@ -121,7 +111,7 @@ class ArtistEditForm(forms.ModelForm):
             self.user.social_media_links = {
                 'facebook': self.cleaned_data.get('facebook'),
                 'youtube': self.cleaned_data.get('youtube'),
-                'instagram': self.cleaned_data.get('instagram'),
+                'spotify': self.cleaned_data.get('spotify'),
             }
             if commit:
                 self.user.save()

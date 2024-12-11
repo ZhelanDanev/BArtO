@@ -70,7 +70,6 @@ def event_details(request, pk):
 
     comments = event.comments.all()  # Всички коментари към събитието
 
-    # Другата логика за събитието
     context = {
         'event': event,
         'is_organizer': is_organizer,
@@ -136,19 +135,25 @@ def invite_followers(request, event_id):
         for user_id in user_ids:
             follower_user = get_object_or_404(UserModel, pk=user_id)
 
-            # Поканване на потребителя за събитието
+
+            if EventParticipant.objects.filter(event=event, artist=follower_user).exists():
+                messages.warning(request, f'{follower_user.username} е вече поканен за това събитие.')
+                continue
+
+
             EventParticipant.objects.get_or_create(event=event, artist=follower_user)
 
-            # Създаване на уведомление за поканата с ID на събитието
+
             notification_message = f"You have been invited to the event: {event.title}"
             Notification.objects.create(
                 user=follower_user,
                 message=notification_message,
                 notification_type="event_invite",
-                event_id=event.pk  # Добавяме ID на събитието в уведомлението
+                event_id=event.pk
             )
 
-        return JsonResponse({'message': 'Invitations sent successfully.'})
+        messages.success(request, 'Invitations sent successfully.')
+        return redirect('event_details', pk=event.pk)
 
     return render(request, 'events/invite_followers.html', {'event': event, 'followers': follower_users})
 

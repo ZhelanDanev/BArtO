@@ -8,13 +8,9 @@ from django.views.generic import CreateView, DeleteView, DetailView
 
 
 from .forms import ArtistEditForm, ArtistRegistrationForm
-from .models import Artist
+from .models import Artist, AppUser
 from ..connections.models import Connection
 from ..notifications.models import Notification
-
-
-def home(request):
-    return render(request, 'common/home.html')
 
 
 @login_required
@@ -22,21 +18,6 @@ def notification_list(request):
     # Вземаме всички уведомления за потребителя
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'notifications/notification_list.html', {'notifications': notifications})
-
-
-# @login_required
-# def profile_details(request, artist_id):
-#     artist = Artist.objects.get(id=artist_id)
-#     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
-#
-#     # Вземаме броя на непрочетените нотификации
-#     unread_notifications_count = Notification.objects.filter(user=request.user, is_read=False).count()
-#
-#     return render(request, 'profile-details.html', {
-#         'artist': artist,
-#         'unread_notifications_count': unread_notifications_count,
-#         'notifications': notifications
-#     })
 
 
 @login_required
@@ -54,17 +35,14 @@ def profile_details(request, artist_id):
     return render(request, 'profile/profile-details.html', context)
 
 
-
 class ArtistRegisterView(CreateView):
     form_class = ArtistRegistrationForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        # Създаваме потребителя
         user = form.save()
 
-        # Създаваме профила на артиста
         artist = Artist.objects.create(
             user=user,
             first_name=form.cleaned_data.get('first_name'),
@@ -73,7 +51,6 @@ class ArtistRegisterView(CreateView):
             profile_picture=form.cleaned_data.get('profile_picture'),
         )
 
-        # Ако има качена профилна снимка, я запазваме
         if artist.profile_picture:
             artist.save()
 
@@ -90,21 +67,18 @@ class ArtistDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         artist = self.get_object()
 
-        # Последователи на артиста
         followers = Connection.objects.filter(
             to_user=artist.user,
             connection_type=Connection.FOLLOW
         )
         context['followers'] = followers
 
-        # Профили, които артистът следва
         following = Connection.objects.filter(
             from_user=artist.user,
             connection_type=Connection.FOLLOW
         )
         context['following'] = following
 
-        # Проверка дали текущият потребител следва артиста
         if self.request.user.is_authenticated:
             context['is_following'] = followers.filter(from_user=self.request.user).exists()
         else:
@@ -121,9 +95,8 @@ class ArtistDetailView(DetailView):
             context['unread_notifications_count'] = unread_notifications_count
             context['notifications'] = notifications
 
-
-
         return context
+
 
 def artist_edit(request, pk):
     # Вземаме свързания Artist
@@ -167,10 +140,21 @@ def logout_view(request):
     return redirect('login')
 
 
-User = get_user_model()
+def artist_list(request):
+    query = request.GET.get('search', '')
+    category_filter = request.GET.get('category', '')
 
+    # Използваме Artist модела, за да получим всички свързани потребители
+    artist_queryset = Artist.objects.all()
 
-def search_users(request):
-    query = request.GET.get('q')
-    users = User.objects.filter(username__icontains=query)
-    return render(request, 'common/search_results.html', {'users': users})
+    if query:
+        artist_queryset = artist_queryset.filter(user__username__icontains=query)
+
+    if category_filter:
+        artist_queryset = artist_queryset.filter(category=category_filter)
+
+    return render(request, 'profile/artist_list.html', {
+        'artists': artist_queryset,
+        'query': query,
+        'category_filter': category_filter
+    })

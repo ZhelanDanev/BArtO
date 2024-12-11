@@ -86,10 +86,10 @@
             const selectedCategory = categoryField.value;
             const genres = CATEGORY_TO_GENRES[selectedCategory] || [];
 
-            // Изчистваме старите опции
+
             genreField.innerHTML = '';
 
-            // Добавяме нови опции
+
             genres.forEach(genre => {
                 const option = document.createElement('option');
                 option.value = genre.value;

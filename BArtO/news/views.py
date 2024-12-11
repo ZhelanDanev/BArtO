@@ -17,7 +17,7 @@ UserModel = get_user_model()
 @permission_required('news.add_news', raise_exception=True)
 def create_news(request):
     user = UserModel
-    if request.user.role != 'editor':
+    if request.user.role == 'artist':
         return redirect('permission_denied')  # Пренасочете, ако не е редактор
     if request.method == 'POST':
         form = NewsForm(request.POST)

@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-38^e%u(*l=^)%d486m-p@wva3h-8a4w)vz8jq0t0xz4aceli%l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     "BArtO.events.apps.EventsConfig",
     "BArtO.notifications.apps.NotificationsConfig",
     "BArtO.common.apps.CommonConfig",
-    "BArtO.news.apps.NewsConfig"
+    "BArtO.news.apps.NewsConfig",
+    "BArtO.works.apps.WorksConfig"
 ]
 
 MIDDLEWARE = [
@@ -105,20 +106,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#     },
-# ]
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 
 # Internationalization

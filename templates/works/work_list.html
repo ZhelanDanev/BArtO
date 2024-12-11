@@ -1,0 +1,21 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+<h1>Works</h1>
+    
+<form method="get">
+    <input type="text" name="author" value="{{ author_query }}" placeholder="Търсене по автор" />
+    <button type="submit">Търси</button>
+</form>
+
+<ul>
+    {% for work in works %}
+        <li>
+            <a href="{% url 'work_detail' pk=work.pk %}">{{ work.title }}</a>
+            by {{ work.author.username }} ({{ work.category }})
+        </li>
+    {% empty %}
+        <li>Няма произведения, които да отговарят на критериите за търсене.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
